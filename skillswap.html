@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SkillSwap</title>
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --teal: #0E7C7B;
+    --accent: #2FA88F;
+    --light: #F4F6F8;
+    --dark: #1A1A1A;
+    --gray: #6B7280;
+    --white: #FFFFFF;
+    --border: #E2E6EA;
+    --danger: #C0392B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--light);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+  /* ---------- Top Nav ---------- */
+  nav {
+    background: var(--navy);
+    color: var(--white);
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  nav .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+  nav .logo span { color: var(--accent); }
+  nav .nav-links { display: flex; gap: 24px; align-items: center; }
+  nav .nav-links a {
+    color: #D6DCE8; text-decoration: none; font-size: 14px; cursor: pointer;
+    padding: 6px 10px; border-radius: 6px; transition: background 0.15s;
+  }
+  nav .nav-links a:hover { background: rgba(255,255,255,0.08); color: var(--white); }
+  nav .nav-links a.active { color: var(--white); font-weight: 600; }
+  .credit-pill {
+    background: var(--accent); color: var(--navy); font-weight: 700;
+    padding: 6px 14px; border-radius: 999px; font-size: 13px;
+  }
+  .logout-btn {
+    background: transparent; border: 1px solid #3a4a6b; color: #D6DCE8;
+    padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;
+  }
+  .logout-btn:hover { background: rgba(255,255,255,0.08); }
+
+  /* ---------- Layout ---------- */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  h1 { font-size: 28px; color: var(--navy); margin-bottom: 8px; }
+  .subtitle { color: var(--gray); font-size: 14px; margin-bottom: 28px; }
+
+  /* ---------- Auth Pages ---------- */
+  .auth-wrapper {
+    max-width: 400px; margin: 60px auto; background: var(--white);
+    border-radius: 12px; padding: 40px; box-shadow: 0 2px 20px rgba(27,42,74,0.08);
+  }
+  .auth-wrapper h1 { text-align: center; }
+  .auth-wrapper .subtitle { text-align: center; }
+  .brand-mark {
+    text-align: center; font-size: 26px; font-weight: 800; color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .brand-mark span { color: var(--accent); }
+
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin: 16px 0 6px; }
+  input, select, textarea {
+    width: 100%; padding: 11px 13px; border: 1px solid var(--border);
+    border-radius: 8px; font-size: 14px; font-family: inherit; color: var(--dark);
+    background: var(--white);
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--teal); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .btn {
+    display: inline-block; background: var(--teal); color: var(--white);
+    border: none; padding: 12px 20px; border-radius: 8px; font-size: 14px;
+    font-weight: 600; cursor: pointer; margin-top: 20px; width: 100%;
+    transition: background 0.15s;
+  }
+  .btn:hover { background: #0b6564; }
+  .btn.secondary { background: var(--navy); }
+  .btn.secondary:hover { background: #142038; }
+  .btn.small { width: auto; padding: 8px 16px; margin-top: 0; font-size: 13px; }
+  .btn.danger { background: var(--danger); }
+  .btn.danger:hover { background: #9c2c20; }
+
+  .switch-link { text-align: center; margin-top: 18px; font-size: 13px; color: var(--gray); }
+  .switch-link a { color: var(--teal); cursor: pointer; font-weight: 600; text-decoration: none; }
+
+  .error-msg {
+    background: #FDECEA; color: var(--danger); padding: 10px 14px;
+    border-radius: 8px; font-size: 13px; margin-top: 14px; display: none;
+  }
+  .success-msg {
+    background: #E8F5F1; color: var(--teal); padding: 10px 14px;
+    border-radius: 8px; font-size: 13px; margin-top: 14px; display: none;
+  }
+
+  /* ---------- Listings ---------- */
+  .toolbar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+  .toolbar input, .toolbar select { flex: 1; min-width: 160px; }
+  .toolbar .btn { width: auto; margin-top: 0; white-space: nowrap; }
+
+  .listing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .listing-card {
+    background: var(--white); border-radius: 10px; padding: 20px;
+    border: 1px solid var(--border);
+  }
+  .listing-card .badge {
+    display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; letter-spacing: 0.03em;
+  }
+  .badge.offer { background: #E8F5F1; color: var(--teal); }
+  .badge.want { background: #EAF0FA; color: #3B5B92; }
+  .listing-card h3 { font-size: 17px; color: var(--navy); margin-bottom: 4px; }
+  .listing-card .category { font-size: 12px; color: var(--gray); margin-bottom: 10px; }
+  .listing-card .desc { font-size: 13.5px; color: var(--dark); line-height: 1.5; margin-bottom: 14px; }
+  .listing-card .owner {
+    font-size: 12px; color: var(--gray); border-top: 1px solid var(--border);
+    padding-top: 12px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .listing-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+  .empty-state {
+    text-align: center; padding: 60px 20px; color: var(--gray);
+    background: var(--white); border-radius: 10px; border: 1px dashed var(--border);
+  }
+
+  /* ---------- Create Listing Form ---------- */
+  .form-card {
+    background: var(--white); border-radius: 10px; padding: 28px; max-width: 520px;
+    border: 1px solid var(--border);
+  }
+  .radio-group { display: flex; gap: 12px; margin-top: 6px; }
+  .radio-group label {
+    flex: 1; margin: 0; border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px; text-align: center; cursor: pointer; font-weight: 600; font-size: 13px;
+    color: var(--gray);
+  }
+  .radio-group input[type="radio"] { display: none; }
+  .radio-group input[type="radio"]:checked + span { color: var(--teal); }
+  .radio-group label.checked { border-color: var(--teal); background: #E8F5F1; color: var(--teal); }
+
+  .tag { display: inline-block; padding: 2px 4px; }
+</style>
+</head>
+<body>
+
+<nav id="navbar" style="display:none;">
+  <div class="logo">Skill<span>Swap</span></div>
+  <div class="nav-links">
+    <a data-page="browse" class="active">Browse</a>
+    <a data-page="mylistings">My Listings</a>
+    <a data-page="sessions">Sessions</a>
+    <a data-page="create">+ New Listing</a>
+    <span class="credit-pill" id="creditPill">5 credits</span>
+    <span id="userNameLabel" style="font-size:13px;color:#D6DCE8;"></span>
+    <button class="logout-btn" onclick="logout()">Log out</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- LOGIN PAGE -->
+  <div class="page active" id="page-login">
+    <div class="auth-wrapper">
+      <div class="brand-mark">Skill<span>Swap</span></div>
+      <p class="subtitle">Trade skills, not money.</p>
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com" />
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" />
+      <button class="btn" onclick="handleLogin()">Log In</button>
+      <div class="error-msg" id="loginError"></div>
+      <div class="switch-link">Don't have an account? <a onclick="showPage('register')">Sign up</a></div>
+    </div>
+  </div>
+
+  <!-- REGISTER PAGE -->
+  <div class="page" id="page-register">
+    <div class="auth-wrapper">
+      <div class="brand-mark">Skill<span>Swap</span></div>
+      <p class="subtitle">Create your account — start with 5 free credits.</p>
+      <label>Full Name</label>
+      <input type="text" id="regName" placeholder="Amisha Sharma" />
+      <label>Email</label>
+      <input type="email" id="regEmail" placeholder="you@example.com" />
+      <label>Password</label>
+      <input type="password" id="regPassword" placeholder="At least 6 characters" />
+      <button class="btn secondary" onclick="handleRegister()">Create Account</button>
+      <div class="error-msg" id="regError"></div>
+      <div class="switch-link">Already have an account? <a onclick="showPage('login')">Log in</a></div>
+    </div>
+  </div>
+
+  <!-- BROWSE PAGE -->
+  <div class="page" id="page-browse">
+    <h1>Browse Skills</h1>
+    <p class="subtitle">Find someone to learn from, or offer to teach.</p>
+    <div class="toolbar">
+      <input type="text" id="searchInput" placeholder="Search by skill name..." />
+      <select id="categoryFilter">
+        <option value="">All Categories</option>
+        <option value="Web Development">Web Development</option>
+        <option value="Design">Design</option>
+        <option value="Languages">Languages</option>
+        <option value="Music">Music</option>
+        <option value="Data Science">Data Science</option>
+        <option value="Other">Other</option>
+      </select>
+      <select id="typeFilter">
+        <option value="">Offer & Want</option>
+        <option value="offer">Offering</option>
+        <option value="want">Wanting</option>
+      </select>
+      <button class="btn small" onclick="loadListings()">Filter</button>
+    </div>
+    <div class="listing-grid" id="listingGrid"></div>
+  </div>
+
+  <!-- MY LISTINGS PAGE -->
+  <!-- SESSIONS PAGE -->
+  <div class="page" id="page-sessions">
+    <h1>My Sessions</h1>
+    <p class="subtitle">Sessions you're teaching or learning.</p>
+    <div class="listing-grid" id="sessionGrid" style="grid-template-columns: 1fr;"></div>
+  </div>
+    <h1>My Listings</h1>
+    <p class="subtitle">Manage what you're offering and looking for.</p>
+    <div class="listing-grid" id="myListingGrid"></div>
+  </div>
+
+  <!-- CREATE LISTING PAGE -->
+  <div class="page" id="page-create">
+    <h1>New Skill Listing</h1>
+    <p class="subtitle">List a skill you can teach, or one you want to learn.</p>
+    <div class="form-card">
+      <label>I want to...</label>
+      <div class="radio-group">
+        <label id="offerLabel" class="checked" onclick="selectType('offer')"><span>Teach (Offer)</span></label>
+        <label id="wantLabel" onclick="selectType('want')"><span>Learn (Want)</span></label>
+      </div>
+      <label>Skill Name</label>
+      <input type="text" id="listingSkillName" placeholder="e.g. React.js, Spanish, Guitar" />
+      <label>Category</label>
+      <select id="listingCategory">
+        <option value="Web Development">Web Development</option>
+        <option value="Design">Design</option>
+        <option value="Languages">Languages</option>
+        <option value="Music">Music</option>
+        <option value="Data Science">Data Science</option>
+        <option value="Other">Other</option>
+      </select>
+      <label>Description</label>
+      <textarea id="listingDescription" placeholder="What can you teach, or what are you hoping to learn?"></textarea>
+      <button class="btn" onclick="handleCreateListing()">Post Listing</button>
+      <div class="error-msg" id="createError"></div>
+      <div class="success-msg" id="createSuccess"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API_BASE = "http://localhost:5000/api";
+let token = localStorage.getItem("skillswap_token") || null;
+let currentUser = JSON.parse(localStorage.getItem("skillswap_user") || "null");
+let selectedType = "offer";
+
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("page-" + name).classList.add("active");
+  document.querySelectorAll(".nav-links a[data-page]").forEach(a => {
+    a.classList.toggle("active", a.dataset.page === name);
+  });
+  if (name === "browse") loadListings();
+  if (name === "mylistings") loadMyListings();
+}
+
+function setLoggedInUI() {
+  document.getElementById("navbar").style.display = "flex";
+  document.getElementById("userNameLabel").textContent = currentUser ? currentUser.name : "";
+  document.getElementById("creditPill").textContent = (currentUser ? currentUser.creditBalance : 0) + " credits";
+}
+
+document.querySelectorAll(".nav-links a[data-page]").forEach(a => {
+  a.addEventListener("click", () => showPage(a.dataset.page));
+});
+
+async function handleRegister() {
+  const name = document.getElementById("regName").value.trim();
+  const email = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value;
+  const errEl = document.getElementById("regError");
+  errEl.style.display = "none";
+  try {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Registration failed");
+    token = data.token;
+    currentUser = data.user;
+    localStorage.setItem("skillswap_token", token);
+    localStorage.setItem("skillswap_user", JSON.stringify(currentUser));
+    setLoggedInUI();
+    showPage("browse");
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.style.display = "block";
+  }
+}
+
+async function handleLogin() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const errEl = document.getElementById("loginError");
+  errEl.style.display = "none";
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Login failed");
+    token = data.token;
+    currentUser = data.user;
+    localStorage.setItem("skillswap_token", token);
+    localStorage.setItem("skillswap_user", JSON.stringify(currentUser));
+    setLoggedInUI();
+    showPage("browse");
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.style.display = "block";
+  }
+}
+
+function logout() {
+  token = null;
+  currentUser = null;
+  localStorage.removeItem("skillswap_token");
+  localStorage.removeItem("skillswap_user");
+  document.getElementById("navbar").style.display = "none";
+  showPage("login");
+}
+
+function selectType(type) {
+  selectedType = type;
+  document.getElementById("offerLabel").classList.toggle("checked", type === "offer");
+  document.getElementById("wantLabel").classList.toggle("checked", type === "want");
+}
+
+async function handleCreateListing() {
+  const skillName = document.getElementById("listingSkillName").value.trim();
+  const category = document.getElementById("listingCategory").value;
+  const description = document.getElementById("listingDescription").value.trim();
+  const errEl = document.getElementById("createError");
+  const okEl = document.getElementById("createSuccess");
+  errEl.style.display = "none"; okEl.style.display = "none";
+
+  if (!skillName) { errEl.textContent = "Skill name is required."; errEl.style.display = "block"; return; }
+
+  try {
+    const res = await fetch(`${API_BASE}/listings`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ type: selectedType, skillName, category, description }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Failed to create listing");
+    okEl.textContent = "Listing posted successfully!";
+    okEl.style.display = "block";
+    document.getElementById("listingSkillName").value = "";
+    document.getElementById("listingDescription").value = "";
+    setTimeout(() => showPage("mylistings"), 700);
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.style.display = "block";
+  }
+}
+
+function renderListingCard(listing, isOwner) {
+  const ownerName = listing.userId && listing.userId.name ? listing.userId.name : (currentUser ? currentUser.name : "Unknown");
+  const ownerId = listing.userId && listing.userId._id ? listing.userId._id : listing.userId;
+  const canRequest = !isOwner && currentUser && ownerId !== currentUser.id;
+
+  const actions = isOwner
+    ? `<div class="listing-actions">
+         <button class="btn small danger" onclick="deleteListing('${listing._id}')">Delete</button>
+       </div>`
+    : canRequest
+    ? `<div class="listing-actions">
+         <button class="btn small" onclick="openRequestModal('${listing._id}')">Request Session</button>
+       </div>`
+    : "";
+
+  return `
+    <div class="listing-card">
+      <span class="badge ${listing.type}">${listing.type === "offer" ? "Offering" : "Wanting"}</span>
+      <h3>${escapeHtml(listing.skillName)}</h3>
+      <div class="category">${escapeHtml(listing.category)}</div>
+      <div class="desc">${escapeHtml(listing.description || "No description provided.")}</div>
+      <div class="owner"><span>By ${escapeHtml(ownerName)}</span></div>
+      ${actions}
+    </div>`;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str || "";
+  return div.innerHTML;
+}
+
+async function loadListings() {
+  const grid = document.getElementById("listingGrid");
+  grid.innerHTML = "<p style='color:#6B7280;'>Loading...</p>";
+  const q = document.getElementById("searchInput").value.trim();
+  const category = document.getElementById("categoryFilter").value;
+  const type = document.getElementById("typeFilter").value;
+  const params = new URLSearchParams();
+  if (q) params.append("q", q);
+  if (category) params.append("category", category);
+  if (type) params.append("type", type);
+
+  try {
+    const res = await fetch(`${API_BASE}/listings?${params.toString()}`);
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">No listings yet. Be the first to <a onclick="showPage('create')" style="color:#0E7C7B;cursor:pointer;">post one</a>.</div>`;
+      return;
+    }
+    grid.innerHTML = data.map(l => renderListingCard(l, currentUser && l.userId && l.userId._id === currentUser.id)).join("");
+  } catch (e) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">Couldn't load listings. Is the server running?</div>`;
+  }
+}
+
+async function loadMyListings() {
+  const grid = document.getElementById("myListingGrid");
+  grid.innerHTML = "<p style='color:#6B7280;'>Loading...</p>";
+  try {
+    const res = await fetch(`${API_BASE}/listings/mine`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">You haven't posted anything yet. <a onclick="showPage('create')" style="color:#0E7C7B;cursor:pointer;">Create your first listing</a>.</div>`;
+      return;
+    }
+    grid.innerHTML = data.map(l => renderListingCard(l, true)).join("");
+  } catch (e) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">Couldn't load your listings.</div>`;
+  }
+}
+
+async function deleteListing(id) {
+  if (!confirm("Delete this listing?")) return;
+  try {
+    const res = await fetch(`${API_BASE}/listings/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Failed to delete");
+    loadMyListings();
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+// On load: restore session if token exists
+if (token && currentUser) {
+  setLoggedInUI();
+  showPage("browse");
+}
+</script>
+</body>
+</html>
