@@ -1,7 +1,7 @@
 const Session = require("../models/Session");
 const Transaction = require("../models/Transaction");
 const SkillListing = require("../models/SkillListing");
-const User = require("../models/User");
+const User = require("../models/user");
 
 // 1. Request a session
 exports.requestSession = async (req, res, next) => {

@@ -61,7 +61,12 @@ function Browse() {
               <h3 style={{ color: "#1B2A4A", margin: "10px 0 4px" }}>{l.skillName}</h3>
               <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 10 }}>{l.category}</div>
               <div style={{ fontSize: 13.5, marginBottom: 14 }}>{l.description}</div>
-              <div style={{ fontSize: 12, color: "#6B7280", borderTop: "1px solid #E2E6EA", paddingTop: 12 }}>By {l.userId?.name}</div>
+              <div style={{ fontSize: 12, color: "#6B7280", borderTop: "1px solid #E2E6EA", paddingTop: 12 }}>
+                By {l.userId?.name}
+                {l.userId?.ratingCount > 0 && (
+                  <span style={{ color: "#E8703A", fontWeight: 600 }}> · ★ {l.userId.avgRating} ({l.userId.ratingCount})</span>
+                )}
+              </div>
               {!isOwner && l.type === "offer" && (
                 <button onClick={() => requestSession(l, false)} style={{ marginTop: 12, background: "#0E7C7B", color: "#fff", border: "none", padding: "8px 16px", borderRadius: 8, cursor: "pointer", fontSize: 13 }}>
                   Request Session

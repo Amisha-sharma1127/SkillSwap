@@ -30,7 +30,7 @@ exports.getListings = async (req, res, next) => {
     if (type) filter.type = type;
     if (q) filter.skillName = { $regex: new RegExp(q, "i") };
 
-    const listings = await SkillListing.find(filter).populate("userId", "name email");
+    const listings = await SkillListing.find(filter).populate("userId", "name email avgRating ratingCount");
     res.json(listings);
   } catch (err) {
     next(err);

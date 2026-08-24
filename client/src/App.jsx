@@ -40,13 +40,15 @@ function App() {
   return (
     <>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Browse />} />
-        <Route path="/my-listings" element={<MyListings />} />
-        <Route path="/create" element={<CreateListing />} />
-        <Route path="/sessions" element={<Sessions />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+      <div style={{ marginLeft: 240, minHeight: "100vh", background: "#F7F3EC" }}>
+        <Routes>
+          <Route path="/" element={<Browse />} />
+          <Route path="/my-listings" element={<MyListings />} />
+          <Route path="/create" element={<CreateListing />} />
+          <Route path="/sessions" element={<Sessions />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </div>
     </>
   );
 }
