@@ -9,13 +9,11 @@ import Browse from "./pages/Browse";
 import MyListings from "./pages/MyListings";
 import CreateListing from "./pages/CreateListing";
 import Sessions from "./pages/Sessions";
-
+import Landing from "./pages/Landing";
 function App() {
   const { token, user, updateUser } = useAuth();
 
-  // Keep the credit balance fresh — refetch the real profile from the
-  // database whenever the app loads or the token changes, instead of
-  // relying on whatever balance was cached at login time.
+  
   useEffect(() => {
     if (token) {
       api
@@ -28,14 +26,15 @@ function App() {
   }, [token]);
 
   if (!token) {
-    return (
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<Navigate to="/login" />} />
-      </Routes>
-    );
-  }
+  return (
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
+}
 
   return (
     <>

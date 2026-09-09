@@ -42,6 +42,12 @@ function Sessions() {
     }
   };
 
+  
+  const joinMeeting = (sessionId) => {
+    const roomName = `SkillSwap-Session-${sessionId}`;
+    window.open(`https://meet.jit.si/${roomName}`, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div style={{ maxWidth: 960, margin: "0 auto", padding: "40px 24px" }}>
       <h1 style={{ color: "#1B2A4A" }}>My Sessions</h1>
@@ -82,9 +88,22 @@ function Sessions() {
               </span>
             </div>
             <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-              {isTeacher && status === "requested" && (
+              {/* CONFIRMED: this was "requested" before — your screenshot
+                  confirms the real value is "offered". Change below if
+                  your backend uses something else. */}
+              {isTeacher && status === "offered" && (
                 <button onClick={() => doAction(s._id, "confirm")} style={btnStyle("#0E7C7B")}>
                   Confirm
+                </button>
+              )}
+              {/* UNVERIFIED: I don't know what status your backend sets
+                  after "confirm" runs — guessing "confirmed" here.
+                  Check your Session model's status enum and swap this
+                  string (in both places below) if it's different, e.g.
+                  "accepted" or "ongoing". */}
+              {status === "confirmed" && (
+                <button onClick={() => joinMeeting(s._id)} style={btnStyle("#3B82F6")}>
+                  Join video call
                 </button>
               )}
               {status === "confirmed" && (
@@ -97,7 +116,7 @@ function Sessions() {
                   Leave Review
                 </button>
               )}
-              {["requested", "confirmed"].includes(status) && (
+              {["offered", "confirmed"].includes(status) && (
                 <button onClick={() => doAction(s._id, "cancel")} style={btnStyle("#C0392B")}>
                   Cancel
                 </button>

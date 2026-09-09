@@ -62,7 +62,7 @@ function Login() {
 
 const styles = {
   wrapper: { maxWidth: 400, margin: "60px auto", background: "#fff", borderRadius: 12, padding: 40, boxShadow: "0 2px 20px rgba(27,42,74,0.08)" },
-  brand: { textAlign: "center", color: "#1B2A4A", fontSize: 26, marginBottom: 4 },
+  brand: { textAlign: "center", color: "#E8703A", fontSize: 26, marginBottom: 4 },
   subtitle: { textAlign: "center", color: "#6B7280", fontSize: 14, marginBottom: 20 },
   label: { display: "block", fontSize: 13, fontWeight: 600, color: "#1B2A4A", margin: "16px 0 6px" },
   input: { width: "100%", padding: "11px 13px", border: "1px solid #E2E6EA", borderRadius: 8, fontSize: 14, boxSizing: "border-box" },
