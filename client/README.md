@@ -111,11 +111,12 @@ Concurrency safety is achieved using MongoDB's atomic `findOneAndUpdate` with a 
 
 ## Team
 
-| Member | Module |
+| Member |
 |---|---|
-| Amisha Sharma | Auth, Listings, Session/Ledger logic |
-| Aryan Choudhary | Frontend integration, Reviews |
-
+| Amisha Sharma  |
+| Aryan Choudhary | 
+| Ashish Kumar |
+| Dev Maharshi |
 ## Future Scope
 
 - Real-time notifications on session status changes
