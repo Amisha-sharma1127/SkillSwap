@@ -52,8 +52,8 @@ exports.acceptOffer = async (req, res, next) => {
     if (session.learnerId.toString() !== req.userId) {
       return res.status(403).json({ message: "Only the learner can accept this offer" });
     }
-    if (session.status !== "offered") {
-      return res.status(400).json({ message: `Cannot accept a session with status '${session.status}'` });
+    if (!["requested", "offered"].includes(session.status)) {
+      return res.status(400).json({ message: `Cannot confirm a session with status '${session.status}'` });
     }
 
     const updatedLearner = await User.findOneAndUpdate(

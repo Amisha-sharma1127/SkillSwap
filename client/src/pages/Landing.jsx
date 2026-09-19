@@ -429,16 +429,20 @@ const s = {
     color: "#1A2333",
   },
   howSub: { fontSize: 14.5, color: "#5B6472", lineHeight: 1.6, maxWidth: 320 },
-  stepsGrid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 },
+  stepsGrid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 },
   stepCard: {
-    background: "#FDFBF7",
-    borderRadius: 16,
-    padding: 22,
-    border: "1px solid #EAE3D6",
+    background: "#FDFBF7", borderRadius: 16, padding: "28px 24px",
+    border: "1px solid #EAE3D6", position: "relative", overflow: "hidden",
+    transition: "transform 0.15s",
   },
-  stepNum: { fontSize: 12, fontWeight: 700, color: "#8A93A3", marginBottom: 20 },
-  stepTitle: { fontSize: 15.5, fontWeight: 700, marginBottom: 8 },
-  stepDesc: { fontSize: 13.5, color: "#5B6472", lineHeight: 1.5 },
+  stepNum: {
+    width: 40, height: 40, borderRadius: 12, background: "#E8703A",
+    color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+    fontWeight: 800, fontSize: 16, marginBottom: 18,
+  },
+  stepTitle: { fontSize: 18, fontWeight: 700, color: "#1A2333", marginBottom: 10 },
+  stepDesc: { fontSize: 14, color: "#5B6472", lineHeight: 1.55 },
+
 
   tutorsSection: {
     padding: "0px 48px 80px",

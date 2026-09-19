@@ -42,101 +42,119 @@ function Sessions() {
     }
   };
 
-  
   const joinMeeting = (sessionId) => {
     const roomName = `SkillSwap-Session-${sessionId}`;
     window.open(`https://meet.jit.si/${roomName}`, "_blank", "noopener,noreferrer");
   };
 
+  const statusStyle = (status) => {
+    const map = {
+      offered: { bg: "#FEF3E2", color: "#B8860B" },
+      requested: { bg: "#FEF3E2", color: "#B8860B" },
+      confirmed: { bg: "#E8F5F1", color: "#0E7C7B" },
+      completed: { bg: "#E8F0FE", color: "#3B5B92" },
+      cancelled: { bg: "#FDECEA", color: "#C0392B" },
+    };
+    return map[status] || { bg: "#F0F0F0", color: "#6B7280" };
+  };
+
   return (
-    <div style={{ maxWidth: 960, margin: "0 auto", padding: "40px 24px" }}>
-      <h1 style={{ color: "#1B2A4A" }}>My Sessions</h1>
-      <p style={{ color: "#6B7280", marginBottom: 24 }}>
-        Sessions you're teaching or learning. Your balance: {user?.creditBalance} credits.
-      </p>
+    <div style={{ background: "#F7F3EC", minHeight: "100vh", width: "100%" }}>
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "40px 24px" }}>
+        <h1 style={{ color: "#1B2A4A", fontSize: 32, marginBottom: 6 }}>My Sessions</h1>
+        <div style={{
+          display: "inline-block", background: "#1A2333", color: "#fff",
+          padding: "8px 18px", borderRadius: 999, fontSize: 14, fontWeight: 600, marginBottom: 28,
+        }}>
+          Balance: <span style={{ color: "#E8703A" }}>{user?.creditBalance} credits</span>
+        </div>
 
-      {sessions.length === 0 && <p style={{ color: "#6B7280" }}>No sessions yet.</p>}
-      {sessions.map((s) => {
-        const isTeacher = s.teacherId?._id === user?.id;
-        const status = (s.status || "").toLowerCase();
-
-        return (
-          <div
-            key={s._id}
-            style={{
-              background: "#fff",
-              borderRadius: 10,
-              padding: 20,
-              border: "1px solid #E2E6EA",
-              marginBottom: 14,
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <div>
-                <strong style={{ color: "#1B2A4A" }}>
-                  {s.skillListingId?.skillName || "Skill Session"}
-                </strong>
-                <div style={{ fontSize: 12, color: "#6B7280" }}>
-                  {isTeacher
-                    ? `Teaching ${s.learnerId?.name || "Learner"}`
-                    : `Learning from ${s.teacherId?.name || "Teacher"}`}{" "}
-                  — {s.creditsAgreed} credits
-                </div>
-              </div>
-              <span style={{ fontSize: 12, fontWeight: 700, color: "#0E7C7B" }}>
-                {status.toUpperCase()}
-              </span>
-            </div>
-            <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-              {/* CONFIRMED: this was "requested" before — your screenshot
-                  confirms the real value is "offered". Change below if
-                  your backend uses something else. */}
-              {isTeacher && status === "offered" && (
-                <button onClick={() => doAction(s._id, "confirm")} style={btnStyle("#0E7C7B")}>
-                  Confirm
-                </button>
-              )}
-              {/* UNVERIFIED: I don't know what status your backend sets
-                  after "confirm" runs — guessing "confirmed" here.
-                  Check your Session model's status enum and swap this
-                  string (in both places below) if it's different, e.g.
-                  "accepted" or "ongoing". */}
-              {status === "confirmed" && (
-                <button onClick={() => joinMeeting(s._id)} style={btnStyle("#3B82F6")}>
-                  Join video call
-                </button>
-              )}
-              {status === "confirmed" && (
-                <button onClick={() => doAction(s._id, "complete")} style={btnStyle("#2FA88F")}>
-                  Mark Complete
-                </button>
-              )}
-              {status === "completed" && (
-                <button onClick={() => leaveReview(s._id)} style={btnStyle("#E8703A")}>
-                  Leave Review
-                </button>
-              )}
-              {["offered", "confirmed"].includes(status) && (
-                <button onClick={() => doAction(s._id, "cancel")} style={btnStyle("#C0392B")}>
-                  Cancel
-                </button>
-              )}
-            </div>
+        {sessions.length === 0 && (
+          <div style={{ textAlign: "center", padding: 60, color: "#8A93A3" }}>
+            No sessions yet — head to Discover to find a skill.
           </div>
-        );
-      })}
+        )}
+
+        {sessions.map((s) => {
+          const isTeacher = s.teacherId?._id === user?.id;
+          const status = (s.status || "").toLowerCase();
+          const st = statusStyle(status);
+
+          return (
+            <div
+              key={s._id}
+              style={{
+                background: "#FDFBF7",
+                borderRadius: 14,
+                padding: 22,
+                border: "1px solid #EAE3D6",
+                marginBottom: 16,
+                boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+                  <div style={{
+                    width: 42, height: 42, borderRadius: 10, background: "#1A2333",
+                    color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+                    fontWeight: 700, fontSize: 16, flexShrink: 0,
+                  }}>
+                    {(isTeacher ? s.learnerId?.name : s.teacherId?.name)?.[0]?.toUpperCase() || "?"}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: "#1A2333", fontSize: 16 }}>
+                      {s.skillListingId?.skillName || "Skill Session"}
+                    </div>
+                    <div style={{ fontSize: 13, color: "#8A93A3", marginTop: 2 }}>
+                      {isTeacher
+                        ? `Teaching ${s.learnerId?.name || "Learner"}`
+                        : `Learning from ${s.teacherId?.name || "Teacher"}`}{" "}
+                      · {s.creditsAgreed} credits
+                    </div>
+                  </div>
+                </div>
+                <span style={{
+                  fontSize: 11, fontWeight: 700, padding: "5px 12px", borderRadius: 999,
+                  background: st.bg, color: st.color, letterSpacing: "0.03em",
+                }}>
+                  {status.toUpperCase()}
+                </span>
+              </div>
+
+              <div style={{ marginTop: 16, display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {isTeacher && ["requested", "offered"].includes(status) && (
+                  <button onClick={() => doAction(s._id, "confirm")} style={btnStyle("#0E7C7B")}>Confirm</button>
+                )}
+                {status === "confirmed" && (
+                  <button onClick={() => joinMeeting(s._id)} style={btnStyle("#3B82F6")}>Join video call</button>
+                )}
+                {status === "confirmed" && (
+                  <button onClick={() => doAction(s._id, "complete")} style={btnStyle("#2FA88F")}>Mark Complete</button>
+                )}
+                {status === "completed" && (
+                  <button onClick={() => leaveReview(s._id)} style={btnStyle("#E8703A")}>Leave Review</button>
+                )}
+                {["offered", "requested", "confirmed"].includes(status) && (
+                  <button onClick={() => doAction(s._id, "cancel")} style={btnStyle("#C0392B", true)}>Cancel</button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
-const btnStyle = (color) => ({
-  background: color,
-  color: "#fff",
-  border: "none",
-  padding: "8px 16px",
+const btnStyle = (color, outline) => ({
+  background: outline ? "transparent" : color,
+  color: outline ? color : "#fff",
+  border: outline ? `1px solid ${color}` : "none",
+  padding: "8px 18px",
   borderRadius: 8,
   cursor: "pointer",
   fontSize: 13,
+  fontWeight: 600,
 });
 
 export default Sessions;

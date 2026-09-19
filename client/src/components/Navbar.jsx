@@ -55,10 +55,11 @@ function Navbar() {
 
 const styles = {
   sidebar: {
-    width: 240, minHeight: "100vh", background: "#1A2333", color: "#fff",
-    padding: "24px 20px", display: "flex", flexDirection: "column",
-    position: "fixed", left: 0, top: 0, boxSizing: "border-box",
-  },
+  width: 240, height: "100vh", background: "#1A2333", color: "#fff",
+  padding: "24px 20px", display: "flex", flexDirection: "column",
+  position: "fixed", left: 0, top: 0, boxSizing: "border-box",
+  overflowY: "auto",
+},
   logo: { fontSize: 20, fontWeight: 800, display: "flex", alignItems: "center", gap: 10, marginBottom: 28 },
   logoMark: {
     width: 30, height: 30, borderRadius: 8, background: "#E8703A", color: "#fff",
